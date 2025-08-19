@@ -24,10 +24,19 @@ def load_configs():
 def tampilkan_detail(config):
     clear()
     print("=== Detail Config ===\n")
-    for k, v in config.items():
-        if k != "_filename":
-            print(f"{k}: {v}\n")
-    print("=====================\n")
+
+    # Tampilkan name, smtp_server, port tanpa jarak
+    for k in ["name", "smtp_server", "port"]:
+        if k in config:
+            print(f"{k}: {config[k]}")
+
+    # Tambahkan 1 baris kosong sebelum email_user
+    print()
+
+    # Tampilkan sisa field tanpa jarak antar field
+    for k in ["email_user", "email_pass", "to", "subject", "body"]:
+        if k in config:
+            print(f"{k}: {config[k]}")
 
 def test_koneksi(config):
     print("🔌 Test koneksi SMTP...")
@@ -74,7 +83,7 @@ def halaman_detail(config):
     tampilkan_detail(config)
 
     while True:
-        choice = input("Lanjut menyuntik? (Y=lanjut / N=kembali ke menu utama\n): ").strip().lower()
+        choice = input("Lanjut menyuntik? (Y=Lanjut / N=Menu utama\n): ").strip().lower()
         if choice == "y":
             try:
                 count = int(input("\nCount (1-25): "))
