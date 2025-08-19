@@ -78,7 +78,7 @@ def kirim_email(config, count, delay):
             time.sleep(delay)
 
         server.quit()
-        print("\n Semua email berhasil dikirim!")
+        print("\nSemua email berhasil dikirim!")
 
     except Exception as e:
         print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
@@ -91,7 +91,7 @@ def halaman_detail(config):
     tampilkan_detail(config)
 
     while True:
-        choice = input("\nLanjut menyuntik? (Y=Lanjut / N=Menu utama\n): ").strip().lower()
+        choice = input("\nLanjut menyuntik? (Y= Lanjut / N= Menu Utama\n): ").strip().lower()
         if choice == "y":
             try:
                 count = int(input("\nCount (1-25): "))
@@ -136,7 +136,7 @@ def main():
             print(f"{i}. {c.get('name', c['_filename'])}")
 
         print("0. Keluar")
-        choice = input("Pilih config (0 untuk keluar): ").strip()
+        choice = input("\nPilih config (0 untuk keluar): ").strip()
 
         if choice == "0":
             break
