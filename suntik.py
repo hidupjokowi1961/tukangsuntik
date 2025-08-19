@@ -42,7 +42,8 @@ def send_email(config):
 def main():
     while True:
         print("\n=== Menu Utama - Pilih Config JSON ===")
-        configs = [f for f in os.listdir() if f.startswith("config") and f.endswith(".json")]
+        # ✅ Perbaikan: semua file .json, gak harus diawali 'config'
+        configs = [f for f in os.listdir() if f.lower().endswith(".json")]
 
         if not configs:
             print("⚠️ Tidak ada file config JSON ditemukan.")
@@ -79,7 +80,6 @@ def main():
         confirm = input("Apakah config sudah sesuai? (y/n): ").lower()
         if confirm == "y":
             send_email(config)
-            # ✅ Tambahan: opsi balik ke menu utama atau keluar
             back = input("Mau kembali ke menu utama? (y/n): ").lower()
             if back != "y":
                 print("👋 Keluar dari program.")
