@@ -61,7 +61,7 @@ def kirim_email(config, count, delay):
             time.sleep(delay)
 
         server.quit()
-        print("\n🎉 Semua email berhasil dikirim!")
+        print("\n Semua email berhasil dikirim!")
 
     except Exception as e:
         print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
@@ -74,11 +74,11 @@ def halaman_detail(config):
     tampilkan_detail(config)
 
     while True:
-        choice = input("Lanjut menggunakan config ini? (Y=lanjut / N=kembali ke menu utama): ").strip().lower()
+        choice = input("Lanjut menyuntik? (Y=lanjut / N=kembali ke menu utama\n): ").strip().lower()
         if choice == "y":
             try:
-                count = int(input("Masukkan jumlah email yang akan dikirim: "))
-                delay = float(input("Masukkan delay antar email (detik): "))
+                count = int(input("\nCount (1-25): "))
+                delay = float(input("Delay in seconds (5-20): "))
             except ValueError:
                 print("⚠️ Input harus angka. Coba lagi.")
                 time.sleep(1)
@@ -87,8 +87,8 @@ def halaman_detail(config):
             kirim_email(config, count, delay)
 
             # Pilihan setelah pengiriman selesai
-            print("\n=== Pilihan Setelah Pengiriman ===")
-            print("1. Kembali ke Halaman Utama")
+            
+            print("\n1. Kembali ke Halaman Utama")
             print("2. Gunakan config ini lagi")
             post_choice = input("Pilih (1/2): ").strip()
             if post_choice == "1":
