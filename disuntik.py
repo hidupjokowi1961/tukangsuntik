@@ -23,7 +23,7 @@ def load_configs():
 
 def tampilkan_detail(config):
     clear()
-    print("=== Detail Config ===\n")
+    print("=== Detail Vaksin ===\n")
 
     # 1. name, smtp_server, port → tanpa jarak
     for k in ["name", "smtp_server", "port"]:
