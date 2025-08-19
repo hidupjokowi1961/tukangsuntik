@@ -1,7 +1,11 @@
 {
-  "From"     : "hidupjokowi1961@gmail.com",
-  "Password" : "hxhi xpag axmo cigp",
-  "To"       : "ifinandri32@gmail.com",
-  "Subject"  : "Tes Email",
-  "Message"  : "Halo ini percobaan email otomatis"
+  "Name": "Jarum 1",
+  "Server": "smtp.gmail.com",
+  "Port": 587,
+  
+  "From": "hidupjokowi1961@gmail.com",
+  "Password": "hxhi xpag axmo cigp",
+  "To": "ifinandri32@gmail.com",
+  "Subject": "Tes Email",
+  "Message": "Ini email percobaan."
 }
