@@ -91,7 +91,7 @@ def halaman_detail(config):
     tampilkan_detail(config)
 
     while True:
-        choice = input("\nLanjut menyuntik? (Y= Lanjut / N= Menu Utama\n): ").strip().lower()
+        choice = input("\nLanjut menyuntik? (Y= Lanjut / N= Menu\n): ").strip().lower()
         if choice == "y":
             try:
                 count = int(input("\nCount (1-25): "))
@@ -125,7 +125,7 @@ def halaman_detail(config):
 def main():
     while True:
         clear()
-        print("=== Menu Utama - Pilih Config JSON ===")
+        print("=== Selamat Datang di Tukang Suntik ===\n")
         configs = load_configs()
         if not configs:
             print("⚠️ Tidak ada file config JSON ditemukan.\n")
