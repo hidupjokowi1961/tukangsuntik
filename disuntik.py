@@ -91,7 +91,7 @@ def halaman_detail(config):
     tampilkan_detail(config)
 
     while True:
-        choice = input("\nLanjut menyuntik? (Y= Lanjut / N= Menu\n): ").strip()
+        choice = input("\nLanjut menyuntik? (Y= Lanjut / N= Menu): ").strip().lower()
         if choice == "y":
             try:
                 count = int(input("\nCount (1-25): "))
