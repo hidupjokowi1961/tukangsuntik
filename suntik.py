@@ -1,91 +1,93 @@
-import smtplib
-import time
-import json
 import os
+import json
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-def load_config(config_file):
-    with open(config_file, "r") as f:
-        return json.load(f)
+# Bersihkan layar (biar rapi)
+def clear():
+    os.system("clear" if os.name == "posix" else "cls")
 
-def send_email(config):
-    sender = config["sender_email"]
-    password = config["app_password"]
-    receiver = config["receiver_email"]
-    subject = config["subject"]
-    message = config["message"]
-    count = config.get("count", 1)
-    delay = config.get("delay", 1)
+# Ambil daftar file JSON
+def list_config():
+    return [f for f in os.listdir() if f.endswith(".json")]
 
-    email_message = f"Subject: {subject}\n\n{message}"
+# Tampilkan detail config
+def tampilkan_config(path):
+    with open(path, "r") as f:
+        data = json.load(f)
+    print("=== Detail Config ===")
+    for k, v in data.items():
+        print(f"{k}: {v}")
+    return data
 
+# Kirim email
+def kirim_email(config):
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(sender, password)
+        smtp_server = config["smtp_server"]
+        smtp_port = config["smtp_port"]
+        email_user = config["email_user"]
+        email_pass = config["email_pass"]
+        tujuan = config["to"]
+        subjek = config["subject"]
+        isi = config["body"]
 
-        for i in range(count):
-            try:
-                server.sendmail(sender, receiver, email_message)
-                print(f"✅ Email {i+1}/{count} terkirim ke {receiver}")
-            except Exception as e:
-                print(f"❌ Email {i+1} gagal: {e}")
+        # Buat pesan
+        msg = MIMEMultipart()
+        msg["From"] = email_user
+        msg["To"] = tujuan
+        msg["Subject"] = subjek
+        msg.attach(MIMEText(isi, "plain"))
 
-            if i < count - 1:
-                time.sleep(delay)
+        print("\n📤 Mengirim email...")
 
-        server.quit()
-        print("\n📌 Selesai: Semua proses pengiriman email sudah dicoba.\n")
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(email_user, email_pass)
+            server.sendmail(email_user, tujuan, msg.as_string())
+
+        print("✅ Email berhasil terkirim ke:", tujuan)
 
     except Exception as e:
-        print(f"❌ Gagal menghubungkan ke server SMTP: {e}")
+        print("❌ Gagal kirim email:", e)
 
-def main():
+    input("\nTekan ENTER untuk kembali ke menu utama...")
+
+# Menu utama
+def menu():
     while True:
-        print("\n=== Menu Utama - Pilih Config JSON ===")
-        # ✅ Perbaikan: semua file .json, gak harus diawali 'config'
-        configs = [f for f in os.listdir() if f.lower().endswith(".json")]
+        clear()
+        print("=== Menu Utama - Pilih Config JSON ===")
+        configs = list_config()
 
         if not configs:
             print("⚠️ Tidak ada file config JSON ditemukan.")
-            return
-
-        for i, cfg in enumerate(configs, 1):
-            print(f"{i}. {cfg}")
-        print("0. Keluar")
-
-        choice = input("Pilih nomor config: ")
-
-        if choice == "0":
-            print("👋 Keluar dari program.")
-            break
-
-        try:
-            config_file = configs[int(choice) - 1]
-        except (IndexError, ValueError):
-            print("⚠️ Pilihan tidak valid.")
+            input("\nTambahkan file JSON lalu tekan ENTER...")
             continue
 
-        config = load_config(config_file)
+        for i, c in enumerate(configs, 1):
+            print(f"{i}. {c}")
 
-        # Preview isi config
-        print("\n=== Detail Config Dipilih ===")
-        print(f"📧 Pengirim : {config['sender_email']}")
-        print(f"📩 Penerima : {config['receiver_email']}")
-        print(f"📝 Subjek   : {config['subject']}")
-        print(f"💬 Pesan    : {config['message']}")
-        print(f"#️⃣ Jumlah  : {config.get('count', 1)}")
-        print(f"⏱️ Delay    : {config.get('delay', 1)} detik")
-        print("=============================")
+        print("0. Keluar")
+        pilihan = input("\nPilih nomor config: ")
 
-        confirm = input("Apakah config sudah sesuai? (y/n): ").lower()
-        if confirm == "y":
-            send_email(config)
-            back = input("Mau kembali ke menu utama? (y/n): ").lower()
-            if back != "y":
-                print("👋 Keluar dari program.")
-                break
+        if pilihan == "0":
+            break
+        if not pilihan.isdigit() or int(pilihan) < 1 or int(pilihan) > len(configs):
+            input("❌ Pilihan tidak valid! Tekan ENTER...")
+            continue
+
+        # Ambil config terpilih
+        file_config = configs[int(pilihan) - 1]
+        clear()
+        config = tampilkan_config(file_config)
+
+        # Tanya apakah mau lanjut
+        lanjut = input("\nApakah mau lanjut kirim email? (y/n): ").lower()
+        if lanjut == "y":
+            kirim_email(config)
         else:
-            print("↩️ Kembali ke menu utama...")
+            input("↩️ Tekan ENTER untuk kembali ke menu utama...")
 
 if __name__ == "__main__":
-    main()
+    menu()
