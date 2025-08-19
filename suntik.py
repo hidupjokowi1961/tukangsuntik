@@ -1,6 +1,9 @@
 import os
 import json
 import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def clear():
     os.system("clear" if os.name == "posix" else "cls")
@@ -11,40 +14,60 @@ def load_configs():
     for f in files:
         try:
             with open(f, "r") as file:
-                configs.append(json.load(file))
-        except:
-            pass
+                data = json.load(file)
+                data["_filename"] = f
+                configs.append(data)
+        except Exception as e:
+            print(f"⚠️ Gagal membaca {f}: {e}")
     return configs
 
 def tampilkan_detail(config):
     clear()
     print("=== Detail Config ===")
     for k, v in config.items():
-        print(f"{k}: {v}")
+        if k != "_filename":
+            print(f"{k}: {v}")
     print("=====================\n")
 
 def test_koneksi(config):
-    print("\n🔌 Menguji koneksi SMTP...")
-    time.sleep(1.5)
-    # simulasi sukses/gagal
-    if str(config.get("port")) in ["587", "465"]:
+    print("\n🔌 Test koneksi SMTP...")
+    try:
+        server = smtplib.SMTP(config["smtp_server"], config["port"], timeout=10)
+        server.starttls()
+        server.login(config["email_user"], config["email_pass"])
+        server.quit()
         print("✅ Koneksi SMTP berhasil!\n")
         return True
-    else:
-        print("❌ Gagal koneksi ke SMTP server!\n")
+    except Exception as e:
+        print(f"❌ Gagal koneksi SMTP: {e}\n")
         return False
 
 def kirim_email(config, count, delay):
-    print("\n📨 Simulasi pengiriman email...")
-    for i in range(1, count+1):
-        print(f"   Mengirim email ke-{i}...")
-        time.sleep(delay)
-    print("✅ Semua email sudah disimulasikan terkirim.\n")
+    try:
+        server = smtplib.SMTP(config["smtp_server"], config["port"])
+        server.starttls()
+        server.login(config["email_user"], config["email_pass"])
+        print("\n📨 Mulai pengiriman email...\n")
+
+        for i in range(1, count+1):
+            msg = MIMEMultipart()
+            msg["From"] = config["email_user"]
+            msg["To"] = config["to"]
+            msg["Subject"] = config["subject"]
+            msg.attach(MIMEText(config["body"], "plain"))
+
+            server.sendmail(config["email_user"], config["to"], msg.as_string())
+            print(f"✅ ({i}/{count}) Email terkirim ke {config['to']}")
+            time.sleep(delay)
+
+        server.quit()
+        print("\n🎉 Semua email berhasil dikirim!")
+
+    except Exception as e:
+        print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
 
 def halaman_detail(config):
-    # otomatis test koneksi dulu
-    sukses = test_koneksi(config)
-    if not sukses:
+    if not test_koneksi(config):
         input("Tekan Enter untuk kembali ke menu utama...")
         return
 
@@ -52,7 +75,7 @@ def halaman_detail(config):
         tampilkan_detail(config)
         try:
             count = int(input("Masukkan jumlah email (count): "))
-            delay = int(input("Masukkan jeda antar email (detik): "))
+            delay = float(input("Masukkan jeda antar email (detik): "))
         except ValueError:
             print("⚠️ Input harus angka. Coba lagi.")
             time.sleep(1)
@@ -60,7 +83,7 @@ def halaman_detail(config):
 
         kirim_email(config, count, delay)
 
-        print("=== Setelah Selesai ===")
+        print("\n=== Pilihan Setelah Pengiriman ===")
         print("1. Kembali ke Halaman Utama")
         print("2. Gunakan config ini lagi")
         print("3. Test koneksi SMTP ulang")
@@ -80,7 +103,6 @@ def main():
     while True:
         clear()
         print("=== Menu Utama - Pilih Config JSON ===")
-
         configs = load_configs()
         if not configs:
             print("⚠️ Tidak ada file config JSON ditemukan.\n")
@@ -88,7 +110,7 @@ def main():
             return
 
         for i, c in enumerate(configs, 1):
-            print(f"{i}. {c.get('name', 'Config tanpa nama')}")
+            print(f"{i}. {c.get('name', c['_filename'])}")
 
         print("0. Keluar")
         choice = input("Pilih config (0 untuk keluar): ").strip()
