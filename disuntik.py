@@ -23,14 +23,14 @@ def load_configs():
 
 def tampilkan_detail(config):
     clear()
-    print("=== Detail Config ===")
+    print("=== Detail Config ===\n")
     for k, v in config.items():
         if k != "_filename":
-            print(f"{k}: {v}")
+            print(f"{k}: {v}\n")
     print("=====================\n")
 
 def test_koneksi(config):
-    print("\n🔌 Test koneksi SMTP...")
+    print("🔌 Test koneksi SMTP...")
     try:
         server = smtplib.SMTP(config["smtp_server"], config["port"], timeout=10)
         server.starttls()
@@ -71,33 +71,39 @@ def halaman_detail(config):
         input("Tekan Enter untuk kembali ke menu utama...")
         return
 
+    tampilkan_detail(config)
+
     while True:
-        tampilkan_detail(config)
-        try:
-            count = int(input("Masukkan jumlah email (count): "))
-            delay = float(input("Masukkan jeda antar email (detik): "))
-        except ValueError:
-            print("⚠️ Input harus angka. Coba lagi.")
-            time.sleep(1)
-            continue
+        choice = input("Lanjut menggunakan config ini? (Y=lanjut / N=kembali ke menu utama): ").strip().lower()
+        if choice == "y":
+            try:
+                count = int(input("Masukkan jumlah email yang akan dikirim: "))
+                delay = float(input("Masukkan delay antar email (detik): "))
+            except ValueError:
+                print("⚠️ Input harus angka. Coba lagi.")
+                time.sleep(1)
+                continue
 
-        kirim_email(config, count, delay)
+            kirim_email(config, count, delay)
 
-        print("\n=== Pilihan Setelah Pengiriman ===")
-        print("1. Kembali ke Halaman Utama")
-        print("2. Gunakan config ini lagi")
-        print("3. Test koneksi SMTP ulang")
-        choice = input("Pilih (1/2/3): ").strip()
+            # Pilihan setelah pengiriman selesai
+            print("\n=== Pilihan Setelah Pengiriman ===")
+            print("1. Kembali ke Halaman Utama")
+            print("2. Gunakan config ini lagi")
+            post_choice = input("Pilih (1/2): ").strip()
+            if post_choice == "1":
+                break
+            elif post_choice == "2":
+                tampilkan_detail(config)
+                continue
+            else:
+                print("⚠️ Pilihan tidak valid, kembali ke menu utama.")
+                break
 
-        if choice == "1":
+        elif choice == "n":
             break
-        elif choice == "2":
-            continue
-        elif choice == "3":
-            test_koneksi(config)
         else:
-            print("⚠️ Pilihan tidak valid. Kembali ke detail config.")
-            time.sleep(1)
+            print("⚠️ Pilihan tidak valid, coba lagi.")
 
 def main():
     while True:
