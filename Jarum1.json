@@ -2,10 +2,9 @@
   "name": "Jarum 1",
   "smtp_server": "smtp.gmail.com",
   "port": 587,
-  
-  "email_user": "hidupjokowi1961@gmail.com",
-  "email_pass": "hxhi xpag axmo cigp",
-  "to": "ifinandri32@gmail.com",
-  "subject": "Verifikasi SKP",
-  "body": "\nNama: Xxx\nNIK: xxx\nSIP: 446.4.005758/DPMPTSP/OL/2021\nExp: Maret 2026"
+  "email_user": "emailkamu@gmail.com",
+  "email_pass": "app_password",
+  "to": "target@example.com",
+  "subject": "Tes Email",
+  "body": "Baris 1\nBaris 2\nBaris 3"
 }
