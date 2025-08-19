@@ -4,7 +4,9 @@ import time
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import sys
 
+# ------------------ Fungsi ------------------
 def clear():
     os.system("clear" if os.name == "posix" else "cls")
 
@@ -21,27 +23,26 @@ def load_configs():
             print(f"⚠️ Gagal membaca {f}: {e}")
     return configs
 
+def load_config(file):
+    with open(file, "r") as f:
+        return json.load(f)
+
 def tampilkan_detail(config):
     clear()
     print("=== Detail Vaksin ===\n")
 
-    # 1. name, smtp_server, port → tanpa jarak
     for k in ["name", "smtp_server", "port"]:
         if k in config:
             print(f"{k}: {config[k]}")
 
-    # 2. jarak antara port dan email_user
-    print()  # 1 baris kosong
+    print()  # jarak antara port dan email_user
 
-    # 3. email_user, email_pass, to → tanpa jarak
     for k in ["email_user", "email_pass", "to"]:
         if k in config:
             print(f"{k}: {config[k]}")
 
-    # 4. jarak antara to dan subject
-    print()  # 1 baris kosong
+    print()  # jarak antara to dan subject
 
-    # 5. subject dengan body → tanpa jarak
     for k in ["subject", "body"]:
         if k in config:
             print(f"{k}: {config[k]}")
@@ -83,6 +84,14 @@ def kirim_email(config, count, delay):
     except Exception as e:
         print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
 
+# ------------------ Mode Cron ------------------
+if len(sys.argv) > 1 and sys.argv[1] == "cron":
+    cron_config_file = "vaksin_cron.json"  # pastikan JSON ini sudah ada
+    config = load_config(cron_config_file)
+    kirim_email(config, config["count"], config["delay"])
+    sys.exit()
+
+# ------------------ Detail Config ------------------
 def halaman_detail(config):
     if not test_koneksi(config):
         input("Tekan Enter untuk kembali ke menu utama...")
@@ -103,8 +112,6 @@ def halaman_detail(config):
 
             kirim_email(config, count, delay)
 
-            # Pilihan setelah pengiriman selesai
-            
             print("\n1. Kembali ke Halaman Utama")
             print("2. Gunakan config ini lagi")
             post_choice = input("Pilih (1/2): ").strip()
@@ -122,6 +129,7 @@ def halaman_detail(config):
         else:
             print("⚠️ Pilihan tidak valid, coba lagi.")
 
+# ------------------ Menu Utama ------------------
 def main():
     while True:
         clear()
