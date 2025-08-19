@@ -25,21 +25,29 @@ def tampilkan_detail(config):
     clear()
     print("=== Detail Config ===\n")
 
-    # Tampilkan name, smtp_server, port tanpa jarak
+    # 1. name, smtp_server, port → tanpa jarak
     for k in ["name", "smtp_server", "port"]:
         if k in config:
             print(f"{k}: {config[k]}")
 
-    # Tambahkan 1 baris kosong sebelum email_user
-    print()
+    # 2. jarak antara port dan email_user
+    print()  # 1 baris kosong
 
-    # Tampilkan sisa field tanpa jarak antar field
-    for k in ["email_user", "email_pass", "to", "subject", "body"]:
+    # 3. email_user, email_pass, to → tanpa jarak
+    for k in ["email_user", "email_pass", "to"]:
+        if k in config:
+            print(f"{k}: {config[k]}")
+
+    # 4. jarak antara to dan subject
+    print()  # 1 baris kosong
+
+    # 5. subject dengan body → tanpa jarak
+    for k in ["subject", "body"]:
         if k in config:
             print(f"{k}: {config[k]}")
 
 def test_koneksi(config):
-    print("🔌 Test koneksi SMTP...")
+    print("\n🔌 Test koneksi SMTP...")
     try:
         server = smtplib.SMTP(config["smtp_server"], config["port"], timeout=10)
         server.starttls()
@@ -83,7 +91,7 @@ def halaman_detail(config):
     tampilkan_detail(config)
 
     while True:
-        choice = input("Lanjut menyuntik? (Y=Lanjut / N=Menu utama\n): ").strip().lower()
+        choice = input("\nLanjut menyuntik? (Y=Lanjut / N=Menu utama\n): ").strip().lower()
         if choice == "y":
             try:
                 count = int(input("\nCount (1-25): "))
