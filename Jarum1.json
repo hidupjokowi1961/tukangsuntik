@@ -1,11 +1,10 @@
 {
-  "Name": "Jarum 1",
-  "Server": "smtp.gmail.com",
-  "Port": 587,
-  
-  "From": "hidupjokowi1961@gmail.com",
-  "Password": "hxhi xpag axmo cigp",
-  "To": "ifinandri32@gmail.com",
-  "Subject": "Tes Email",
-  "Message": "Ini email percobaan."
+  "name": "Jarum 1",
+  "smtp_server": "smtp.gmail.com",
+  "port": 587,
+  "email_user": "hidupjokowi1961@gmail.com",
+  "email_pass": "hxhi xpag axmo cigp",
+  "to": "ifinandri32@gmail.com",
+  "subject": "Verifikasi SKP",
+  "body": "Nama: Kurnia\nNIK: 340201150998001\nExp: Maret 2026"
 }
