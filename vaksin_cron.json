@@ -1,5 +1,5 @@
 {
-  "name": "Vaksin Cron",
+  "name": "Vaksin Otomatis (Only in Cron Mode)",
   "smtp_server": "smtp.gmail.com",
   "port": 587,
   "email_user": "hidupjokowi1961@gmail.com",
@@ -7,6 +7,6 @@
   "to": "helpdesk@kemkes.go.id",
   "subject": "Verifikasi SKP",
   "body": "SKP belum diverifikasi, SIP sudah mau expired",
-  "count": 5,
-  "delay": 5
+  "count": 25,
+  "delay": 12
 }
