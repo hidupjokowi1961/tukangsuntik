@@ -4,7 +4,6 @@ import time
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import sys
 
 # ------------------ Fungsi ------------------
 def clear():
@@ -84,16 +83,6 @@ def kirim_email(config, count, delay):
     except Exception as e:
         print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
 
-# ------------------ Mode Cron ------------------
-if len(sys.argv) > 1 and sys.argv[1] == "cron":
-    cron_config_file = "vaksin_cron.json"  # pastikan JSON ini sudah ada
-    config = load_config(cron_config_file)
-    kirim_email(config, config["count"], config["delay"])
-
-    # Hapus cron job yang memanggil script ini (sekali jalan)
-    os.system("crontab -l | grep -v 'disuntik.py cron' | crontab -")
-
-    sys.exit()
 # ------------------ Detail Config ------------------
 def halaman_detail(config):
     if not test_koneksi(config):
@@ -108,10 +97,17 @@ def halaman_detail(config):
             try:
                 count = int(input("\nCount (1-25): "))
                 delay = float(input("Delay in seconds (5-20): "))
+                countdown = int(input("Hitung mundur sebelum mulai (detik): "))
             except ValueError:
                 print("⚠️ Input harus angka. Coba lagi.")
                 time.sleep(1)
                 continue
+
+            # Animasi countdown
+            for i in range(countdown, 0, -1):
+                print(f"\r⏳ Mulai dalam {i} detik...", end="", flush=True)
+                time.sleep(1)
+            print("\n📨 Mulai pengiriman email!")
 
             kirim_email(config, count, delay)
 
