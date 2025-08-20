@@ -1,0 +1,12 @@
+{
+  "name": "Vaksin Cron",
+  "smtp_server": "smtp.gmail.com",
+  "port": 587,
+  "email_user": "hidupjokowi1961@gmail.com",
+  "email_pass": "hxhi xpag axmo cigp",
+  "to": "helpdesk@kemkes.go.id",
+  "subject": "Verifikasi SKP",
+  "body": "SKP belum diverifikasi, SIP sudah mau expired",
+  "count": 5,
+  "delay": 5
+}
