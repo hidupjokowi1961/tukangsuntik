@@ -96,7 +96,7 @@ def halaman_detail(config):
             try:
                 count = int(input("\nCount (1-25): "))
                 delay = float(input("Delay in seconds (5-20): "))
-                countdown = int(input("Hitung mundur sebelum mulai (detik): "))
+                countdown = int(input("\nHitung mundur sebelum mulai (detik): "))
             except ValueError:
                 print("⚠️ Input harus angka. Coba lagi.")
                 time.sleep(1)
@@ -107,7 +107,7 @@ def halaman_detail(config):
                 print(f"\r⏳ Mulai dalam {i} detik...", end="", flush=True)
                 time.sleep(1)
 
-            print("\n📨 Mulai pengiriman email!")  # langsung setelah countdown
+            print("\n\n📨 Mulai pengiriman email!")  # langsung setelah countdown
 
             kirim_email(config, count, delay)
 
