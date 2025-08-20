@@ -92,8 +92,8 @@ def halaman_detail(config):
         if choice == "y":
             try:
                 count = int(input("\nCount (1-25): "))
-                delay = float(input("Delay in seconds (5-20): "))
-                countdown = int(input("Hitung mundur sebelum mulai (detik): "))
+                delay = float(input("Delay in seconds: "))
+                countdown = int(input("Countdown in seconds: "))
                 if countdown < 0:
                     countdown = 0
             except ValueError:
