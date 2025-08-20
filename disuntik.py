@@ -89,8 +89,11 @@ if len(sys.argv) > 1 and sys.argv[1] == "cron":
     cron_config_file = "vaksin_cron.json"  # pastikan JSON ini sudah ada
     config = load_config(cron_config_file)
     kirim_email(config, config["count"], config["delay"])
-    sys.exit()
 
+    # Hapus cron job yang memanggil script ini (sekali jalan)
+    os.system("crontab -l | grep -v 'disuntik.py cron' | crontab -")
+
+    sys.exit()
 # ------------------ Detail Config ------------------
 def halaman_detail(config):
     if not test_koneksi(config):
