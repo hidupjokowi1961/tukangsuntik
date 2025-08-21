@@ -4,39 +4,41 @@ import time
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.utils import formataddr  # 🔥 untuk nama pengirim
 
 # ------------------ Fungsi ------------------
 def clear():
     os.system("clear" if os.name == "posix" else "cls")
 
-def load_config():
-    file = "vaksin.json"
-    if not os.path.exists(file):
-        print("⚠️ File vaksin.json tidak ditemukan.")
-        return None
-    try:
-        with open(file, "r") as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"⚠️ Gagal membaca vaksin.json: {e}")
-        return None
+def load_configs():
+    files = [f for f in os.listdir() if f.endswith(".json")]
+    configs = []
+    for f in files:
+        try:
+            with open(f, "r") as file:
+                data = json.load(file)
+                data["_filename"] = f
+                configs.append(data)
+        except Exception as e:
+            print(f"⚠️ Gagal membaca {f}: {e}")
+    return configs
 
 def tampilkan_detail(config):
     clear()
     print("=== Detail Vaksin ===\n")
 
-    # Tentukan key yang ingin ditampilkan dan lebarnya
     sections = [
         (["name", "smtp_server", "port"], 12),
         (["email_user", "email_pass", "to"], 12),
-        (["subject", "body"], 12)
+        (["subject", "body"], 12),
+        (["sender_name"], 12),  # 🔥 tambahkan info nama pengirim kalau ada
     ]
 
     for keys, width in sections:
         for k in keys:
             if k in config:
                 print(f"{k.ljust(width)}: {config[k]}")
-        print()  # jarak antar section
+        print()
 
 def test_koneksi(config):
     print("\n🔌 Test koneksi SMTP...")
@@ -57,9 +59,15 @@ def kirim_email(config, count, delay):
         server.starttls()
         server.login(config["email_user"], config["email_pass"])
 
+        # 🔥 Atur "From" → gunakan sender_name kalau ada
+        if "sender_name" in config and config["sender_name"].strip():
+            from_addr = formataddr((config["sender_name"], config["email_user"]))
+        else:
+            from_addr = config["email_user"]
+
         for i in range(1, count+1):
             msg = MIMEMultipart()
-            msg["From"] = config["email_user"]
+            msg["From"] = from_addr
             msg["To"] = config["to"]
             msg["Subject"] = config["subject"]
             msg.attach(MIMEText(config["body"], "plain"))
@@ -74,7 +82,7 @@ def kirim_email(config, count, delay):
     except Exception as e:
         print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
 
-# ------------------ Halaman Detail ------------------
+# ------------------ Halaman Detail & Menu tetap ------------------
 def halaman_detail(config):
     if not test_koneksi(config):
         input("Tekan Enter untuk kembali ke menu utama...")
@@ -96,7 +104,6 @@ def halaman_detail(config):
                 time.sleep(1)
                 continue
 
-            # Animasi countdown
             for i in range(countdown, 0, -1):
                 print(f"\r⏳ Mulai dalam {i} detik...", end="", flush=True)
                 time.sleep(1)
@@ -121,27 +128,33 @@ def halaman_detail(config):
         else:
             print("⚠️ Pilihan tidak valid, coba lagi.")
 
-# ------------------ Menu Utama ------------------
 def main():
     while True:
         clear()
         print("=== Selamat Datang di Tukang Suntik ===\n")
-        config = load_config()
-        if not config:
-            print("⚠️ Tidak ada config vaksin.json.\n")
+        configs = load_configs()
+        if not configs:
+            print("⚠️ Tidak ada file config JSON ditemukan.\n")
             time.sleep(2)
             return
 
-        print("1. Gunakan vaksin.json")
+        for i, c in enumerate(configs, 1):
+            print(f"{i}. {c.get('name', c['_filename'])}")
+
         print("0. Keluar")
-        choice = input("\nPilih (0 untuk keluar): ").strip()
+        choice = input("\nPilih config (0 untuk keluar): ").strip()
 
         if choice == "0":
             break
-        elif choice == "1":
-            halaman_detail(config)
-        else:
-            print("⚠️ Pilihan tidak valid.")
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(configs):
+                halaman_detail(configs[idx])
+            else:
+                print("⚠️ Pilihan tidak valid.")
+                time.sleep(1)
+        except ValueError:
+            print("⚠️ Input harus angka.")
             time.sleep(1)
 
 if __name__ == "__main__":
