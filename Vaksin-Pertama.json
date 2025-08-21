@@ -1,6 +1,6 @@
 {
-  "name": "Vaksin Pertama",
-  "from_name": " Bianca Salsabila",
+  "name": "Vaksin 1",
+  "from_name": "Bianca Salsabila",
   "smtp_server": "smtp.gmail.com",
   "port": 587,
   "email_user": "biancasalsabila.ners@gmail.com",
