@@ -1,11 +1,11 @@
 {
-  "name": "Vaksin Kedua",
-  "from_name": "Dinas Kesehatan RI",
-  "smtp_server": "smtp.gmail.com",
-  "port": 587,
-  "email_user": "hidupjokowi1961@gmail.com",
-  "email_pass": "hxhi xpag axmo cigp",
-  "to": "helpdesk@kemkes.go.id",
-  "subject": "Verifikasi SKP",
-  "body": "\n\nVerifikasi SKP Ranah A, B, C\nNama: Sendy Firmansyah\nNIK: 3104081206000001\nSIP: 446.4.001069/DPMPTSP/OL/2021\nExp: Maret 2026"
+    "name": "Config Gmail 1",
+    "smtp_server": "smtp.gmail.com",
+    "port": 587,
+    "email_user": "hidupjokowi1961@gmail.com",
+    "email_pass": "hxhi xpag axmo cigp",
+    "from_name": "Hidup Jokowi",
+    "to": "onaresport32@gmail.com",
+    "subject": "Percobaan Email",
+    "body": "Halo,\n\nIni adalah email percobaan dari script Python.\n\nSalam!"
 }
