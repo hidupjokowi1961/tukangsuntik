@@ -1,10 +1,11 @@
 {
   "name": "Vaksin Pertama",
+  "from_name": " Bianca Salsabila",
   "smtp_server": "smtp.gmail.com",
   "port": 587,
   "email_user": "biancasalsabila.ners@gmail.com",
   "email_pass": "utbt qizg cgke akdm",
-  "to": "helpdesk@kemkes.go.id",
+  "to": "onaresport32@gmail.com",
   "subject": "SKP Belum Diverifikasi",
-  "body": "\n\nNama: Bianca Salsabila\nPeriode SIP: 2022-2027"
+  "body": "\n\nNama: Bianca Salsabila\nProfesi: Ners\nExp: 2026"
 }
