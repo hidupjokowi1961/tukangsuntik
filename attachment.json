@@ -1,0 +1,12 @@
+{
+  "name": "Vaksin 3",
+  "from_name": "Sendy Firmansyah",
+  "smtp_server": "smtp.gmail.com",
+  "port": 587,
+  "email_user": "hidupjokowi1961@gmail.com",
+  "email_pass": "hxhi xpag axmo cigp",
+  "to": "onaresport32@gmail.com",
+  "subject": "Mohon Validasi",
+  "body": "Pengajuan masih dalam proses sejak Juli.",
+  "attachment": "pengajuan.jpg"
+}
