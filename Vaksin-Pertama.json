@@ -2,9 +2,9 @@
   "name": "Vaksin Pertama",
   "smtp_server": "smtp.gmail.com",
   "port": 587,
-  "email_user": "hidupjokowi1961@gmail.com",
-  "email_pass": "hxhi xpag axmo cigp",
+  "email_user": "biancasalsabila.ners@gmail.com",
+  "email_pass": "utbt qizg cgke akdm",
   "to": "helpdesk@kemkes.go.id",
-  "subject": "Verifikasi SKP",
-  "body": "\n\nVerifikasi SKP Ranah A, B, C\nNama: Sendy Firmansyah\nNIK: 3104081206000001\nSIP: 446.4.001069/DPMPTSP/OL/2021\nExp: Maret 2026"
+  "subject": "SKP Belum Diverifikasi",
+  "body": "\n\nNama: Bianca Salsabila\nPeriode SIP: 2022-2027"
 }
