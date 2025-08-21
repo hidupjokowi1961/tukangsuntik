@@ -1,161 +1,88 @@
+import smtplib
 import os
 import json
 import time
-import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.utils import formataddr  # 🔥 untuk nama pengirim
+from email.utils import formataddr
 
-# ------------------ Fungsi ------------------
-def clear():
-    os.system("clear" if os.name == "posix" else "cls")
-
-def load_configs():
-    files = [f for f in os.listdir() if f.endswith(".json")]
+# Fungsi untuk memuat semua file JSON di folder kerja
+def load_all_json():
+    json_files = [f for f in os.listdir() if f.endswith(".json")]
     configs = []
-    for f in files:
+    if not json_files:
+        print("⚠️ Tidak ada file .json ditemukan di folder ini.")
+        return configs
+    for file in json_files:
         try:
-            with open(f, "r") as file:
-                data = json.load(file)
-                data["_filename"] = f
+            with open(file, "r") as f:
+                data = json.load(f)
                 configs.append(data)
         except Exception as e:
-            print(f"⚠️ Gagal membaca {f}: {e}")
+            print(f"⚠️ Gagal membaca {file}: {e}")
     return configs
 
+# Fungsi untuk menampilkan detail konfigurasi
 def tampilkan_detail(config):
-    clear()
-    print("=== Detail Vaksin ===\n")
+    print("\n📄 Detail Konfigurasi:")
+    print(f"  Nama Config   : {config.get('name', '-')}")
+    print(f"  SMTP Server   : {config.get('smtp_server', '-')}")
+    print(f"  Port          : {config.get('port', '-')}")
+    print(f"  Email User    : {config.get('email_user', '-')}")
+    print(f"  Sender Name   : {config.get('sender_name', '-')}")
+    print(f"  To            : {config.get('to', '-')}")
+    print(f"  Subject       : {config.get('subject', '-')}")
+    print(f"  Body          : {config.get('body', '-')}\n")
 
-    sections = [
-        (["name", "smtp_server", "port"], 12),
-        (["email_user", "email_pass", "to"], 12),
-        (["subject", "body"], 12),
-        (["sender_name"], 12),  # 🔥 tambahkan info nama pengirim kalau ada
-    ]
-
-    for keys, width in sections:
-        for k in keys:
-            if k in config:
-                print(f"{k.ljust(width)}: {config[k]}")
-        print()
-
-def test_koneksi(config):
-    print("\n🔌 Test koneksi SMTP...")
+# Fungsi kirim email
+def kirim_email(config):
     try:
-        server = smtplib.SMTP(config["smtp_server"], config["port"], timeout=10)
-        server.starttls()
-        server.login(config["email_user"], config["email_pass"])
-        server.quit()
-        print("✅ Koneksi SMTP berhasil!\n")
-        return True
-    except Exception as e:
-        print(f"❌ Gagal koneksi SMTP: {e}\n")
-        return False
+        msg = MIMEMultipart()
+        sender_name = config.get("sender_name", None)
 
-def kirim_email(config, count, delay):
-    try:
+        # Pakai nama pengirim kalau ada
+        if sender_name:
+            msg['From'] = formataddr((sender_name, config["email_user"]))
+        else:
+            msg['From'] = config["email_user"]
+
+        msg['To'] = config["to"]
+        msg['Subject'] = config["subject"]
+
+        # Body pesan
+        msg.attach(MIMEText(config["body"], "plain"))
+
+        # Kirim via SMTP
         server = smtplib.SMTP(config["smtp_server"], config["port"])
         server.starttls()
         server.login(config["email_user"], config["email_pass"])
-
-        # 🔥 Atur "From" → gunakan sender_name kalau ada
-        if "sender_name" in config and config["sender_name"].strip():
-            from_addr = formataddr((config["sender_name"], config["email_user"]))
-        else:
-            from_addr = config["email_user"]
-
-        for i in range(1, count+1):
-            msg = MIMEMultipart()
-            msg["From"] = from_addr
-            msg["To"] = config["to"]
-            msg["Subject"] = config["subject"]
-            msg.attach(MIMEText(config["body"], "plain"))
-
-            server.sendmail(config["email_user"], config["to"], msg.as_string())
-            print(f"✅ ({i}/{count}) Email terkirim ke {config['to']}")
-            time.sleep(delay)
-
+        server.sendmail(config["email_user"], config["to"], msg.as_string())
         server.quit()
-        print("\nSemua email berhasil dikirim!")
-
+        print(f"✅ Email terkirim ke {config['to']}")
     except Exception as e:
-        print(f"❌ Terjadi kesalahan saat mengirim email: {e}")
+        print(f"❌ Gagal mengirim email: {e}")
 
-# ------------------ Halaman Detail & Menu tetap ------------------
-def halaman_detail(config):
-    if not test_koneksi(config):
-        input("Tekan Enter untuk kembali ke menu utama...")
-        return
+# Fungsi countdown sebelum mulai
+def countdown_timer(detikan):
+    print(f"Hitung mundur sebelum mulai (detik): {detikan}")
+    for sisa in range(detikan, 0, -1):
+        print(f"\r⏳ Mulai dalam {sisa} detik...", end="", flush=True)
+        time.sleep(1)
+    print("\n📨 Mulai pengiriman email!")
 
-    tampilkan_detail(config)
-
-    while True:
-        choice = input("\nLanjut menyuntik? (Y= Lanjut / N= Menu): ").strip().lower()
-        if choice == "y":
-            try:
-                count = int(input("\nCount (1-25): "))
-                delay = float(input("Delay in seconds: "))
-                countdown = int(input("Countdown in seconds: "))
-                if countdown < 0:
-                    countdown = 0
-            except ValueError:
-                print("⚠️ Input harus angka. Coba lagi.")
-                time.sleep(1)
-                continue
-
-            for i in range(countdown, 0, -1):
-                print(f"\r⏳ Mulai dalam {i} detik...", end="", flush=True)
-                time.sleep(1)
-            print("\n\n📨 Mulai pengiriman email...")
-
-            kirim_email(config, count, delay)
-
-            print("\n1. Kembali ke Halaman Utama")
-            print("2. Gunakan config ini lagi")
-            post_choice = input("Pilih (1/2): ").strip()
-            if post_choice == "1":
-                break
-            elif post_choice == "2":
-                tampilkan_detail(config)
-                continue
-            else:
-                print("⚠️ Pilihan tidak valid, kembali ke menu utama.")
-                break
-
-        elif choice == "n":
-            break
-        else:
-            print("⚠️ Pilihan tidak valid, coba lagi.")
-
-def main():
-    while True:
-        clear()
-        print("=== Selamat Datang di Tukang Suntik ===\n")
-        configs = load_configs()
-        if not configs:
-            print("⚠️ Tidak ada file config JSON ditemukan.\n")
-            time.sleep(2)
-            return
-
-        for i, c in enumerate(configs, 1):
-            print(f"{i}. {c.get('name', c['_filename'])}")
-
-        print("0. Keluar")
-        choice = input("\nPilih config (0 untuk keluar): ").strip()
-
-        if choice == "0":
-            break
-        try:
-            idx = int(choice) - 1
-            if 0 <= idx < len(configs):
-                halaman_detail(configs[idx])
-            else:
-                print("⚠️ Pilihan tidak valid.")
-                time.sleep(1)
-        except ValueError:
-            print("⚠️ Input harus angka.")
-            time.sleep(1)
-
+# MAIN PROGRAM
 if __name__ == "__main__":
-    main()
+    configs = load_all_json()
+    if not configs:
+        print("⚠️ Tidak ada config JSON valid.")
+        exit()
+
+    # Pilih config yang ditemukan
+    for config in configs:
+        tampilkan_detail(config)
+
+        # Countdown (bisa ubah manual di sini)
+        countdown_timer(5)  # contoh 5 detik
+
+        # Kirim email
+        kirim_email(config)
